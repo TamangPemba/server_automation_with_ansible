@@ -1,0 +1,52 @@
+# sahre a samba directory /samba_share for your domain
+# share name samba_share must be browseable, the directory belong to the developers group and everybody on developers groups has aread access to the share directory. 
+# user harry having read write permission on samba share 
+
+--- 
+- name: configuring samba server
+  hosts: server
+  become: true
+  tasks:
+          - name: installing samba
+            yum:
+                    name: samba
+                    state: present
+          - name: creating harry user
+            user:
+                    name: harry
+                    state: present
+                    shell: /sbin/nologin
+                    create_home: no
+                    system: yes
+          - name: creating group
+            group:
+                    name: developers
+                    state: present
+          - name: giving password to harry user
+            command: smbpasswd -a -s harry
+            args:
+                    stdin: "redaht\nredhat"
+          - name: creating shared directory
+            file:
+                    path: /samba_share
+                    state: directory
+                    setype: samba_share_t
+                    owner: harry
+                    group: developers
+                    mode: '2775'
+          - name: copying configuration file
+            template:
+                    src: templates/smb.conf.j2
+                    dest: /etc/samba/smb.conf
+
+          - name: starting samba service
+            service:
+                    name: smb
+                    state: started
+          - name: from firewall
+            firewalld:
+                    name: samba
+                    state: enabled
+                    immediate: yes
+                    permanent: true
+

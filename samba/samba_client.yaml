@@ -1,0 +1,28 @@
+---
+- name: configuring samba client
+  hosts: client
+  become: true
+  tasks:
+          - name: installing cifs-utils
+            yum:
+                    name: cifs-utils
+                    state: present
+          - name: creating mounting directory
+            file:
+                    path: /samba_mount
+                    state: directory
+          - name: copyig user credentials 
+            copy:
+                    src: files/cred.txt
+                    dest: /etc/samba/cred.txt
+                    owner: root
+                    group: root
+                    mode: '0600'
+            no_log: true
+          - name: mounting to directory
+            mount:
+                    path: /samba_mount
+                    src: "//server.example.com:/samba_share"
+                    opts: "credentials=/etc/samba/cred.txt,multiuser,seal"
+                    fstype: cifs
+                    state: mounted
