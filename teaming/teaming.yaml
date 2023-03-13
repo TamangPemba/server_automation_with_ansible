@@ -1,0 +1,37 @@
+---
+- name: configuring teaming 
+  hosts: servers
+  become: true
+  vars:
+          network_connections:
+                  - name: team0
+                    interface_name: team0
+                    type: team
+                    state: up
+                    ip:
+                            dhcp4: no
+                            auto6: no
+                            address:
+                                    - "192.168.1.100/24"
+                  - name: team0-port1
+                    interface_name: eth1
+                    type: ethernet
+                    master: team0
+                    state: up
+                  - name: team0-port2
+                    interface_name: eth2
+                    type: ethernet
+                    master: team0
+                    state: up
+  roles:
+          - rhel-system-roles.network
+  tasks:
+          - name: giving runner on team
+            command: /usr/bin/nmcli con mod team0 team.runner activebackup
+          - name: connection up
+            command: /usr/bin/nmcli con up team0
+          - name: restarting network service
+            service:
+                    name: NetworkManager
+                    state: restarted
+                    enabled: yes
