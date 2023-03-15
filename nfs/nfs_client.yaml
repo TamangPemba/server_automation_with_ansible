@@ -3,14 +3,16 @@
   hosts: nfs_clients
   become: true
   tasks:
-          - name: installing nfs-utils packages
+          - name: ensure nfs-utils is installed 
             yum:
                     name: nfs-utils
                     state: present
+
           - name: creating nfs mounting directory 
             file:
                     name: /nfs_receive
                     state: directory
+
           - name: For permanent mounting 
             mount:
                     path: /nfs_receive

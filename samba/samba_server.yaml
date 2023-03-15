@@ -7,10 +7,11 @@
   hosts: server
   become: true
   tasks:
-          - name: installing samba
+          - name: ensure samba packages is present
             yum:
                     name: samba
                     state: present
+
           - name: creating harry user
             user:
                     name: harry
@@ -18,14 +19,17 @@
                     shell: /sbin/nologin
                     create_home: no
                     system: yes
+
           - name: creating group
             group:
                     name: developers
                     state: present
+
           - name: giving password to harry user
             command: smbpasswd -a -s harry
             args:
                     stdin: "redaht\nredhat"
+
           - name: creating shared directory
             file:
                     path: /samba_share
@@ -34,6 +38,7 @@
                     owner: harry
                     group: developers
                     mode: '2775'
+
           - name: copying configuration file
             template:
                     src: templates/smb.conf.j2
@@ -43,6 +48,7 @@
             service:
                     name: smb
                     state: started
+
           - name: from firewall
             firewalld:
                     name: samba

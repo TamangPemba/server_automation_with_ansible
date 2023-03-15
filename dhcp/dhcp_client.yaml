@@ -1,0 +1,25 @@
+---
+- name: ensure client get IP from dhcp-server
+  hosts: client
+  become: true
+  vars:
+          network_connections:
+                  - name: dhcp_client
+                    interface_name: ens224
+                    type: ethernet
+                    ip:
+                            dhcp4: true
+                            auto6: true
+                            
+  roles:
+          - rhel-system-roles.network
+
+  tasks:
+          - name: restarting NetworkManager service
+            service:
+                    name: NetworkManager
+                    state: restarted
+                    enabled: true
+
+          - name: connection activation
+            command: /usr/bin/nmcli con up dhcp_client

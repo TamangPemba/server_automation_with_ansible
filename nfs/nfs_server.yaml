@@ -3,44 +3,42 @@
   hosts: nfs-server
   become: true
   tasks:
-          - name: installing nfs-server
+          - name: ensure nfs-utils is installed 
             yum:
                     name: nfs-utils
                     state: present
-          - name: creating shared directory
+
+          - name: creating sharing directory
             file:
                     path: /nfs_share
                     state: directory
                     owner: root
                     group: root
+
           - name: creating configuration files
             file:
                     path: /etc/exports.d/server.exports
                     state: touch
+
           - name: copying contents to the configuratin files
             copy:
                     src: templates/server.exports.j2
                     dest: /etc/exports.d/server.exports
+
           - name: starting nfs-service
             service:
                     name: nfs-server
                     state: started
                     enabled: true
-          - name: enabling nfs service from firewall
+
+          - name: enabling services from firewall
             firewalld:
-                    service: nfs
+                    service: "{{ item }}"
                     state: enabled
                     immediate: yes
                     permanent: true
-          - name: enabling rpc-bind service fromm firewall
-            firewalld:
-                    service: rpc-bind
-                    state: enabled
-                    immediate: yes
-                    permanent: true
-          - name: enabling mountd service from firewall
-            firewalld:
-                    service: mountd
-                    immdeiate: yes
-                    permanent: true
-                    state: enabled
+            loop:
+              - nfs
+              - rpc-bind
+              - mountd
+               

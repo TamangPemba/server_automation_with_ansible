@@ -1,0 +1,16 @@
+authoritative;
+
+subnet	192.168.1.0	netmask	255.255.255.0	{
+	range	192.168.1.200	192.168.1.210;
+	option	routers	192.168.1.1;
+	option	broadcast-address  192.168.1.254;
+	option 	domain-name-servers  192.168.1.54;
+	option domain-search	"example.com";
+	default-lease-time  600;
+	max-lease-time  7200;
+}
+
+host clinet  {
+   hardware ethernet 32:43:23:00:f2:0b; 
+   fixed-address 192.168.1.100;
+}

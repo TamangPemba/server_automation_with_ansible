@@ -3,14 +3,16 @@
   hosts: client
   become: true
   tasks:
-          - name: installing cifs-utils
+          - name: ensure cifs-utils packages is present
             yum:
                     name: cifs-utils
                     state: present
+
           - name: creating mounting directory
             file:
                     path: /samba_mount
                     state: directory
+
           - name: copyig user credentials 
             copy:
                     src: files/cred.txt
@@ -19,6 +21,7 @@
                     group: root
                     mode: '0600'
             no_log: true
+
           - name: mounting to directory
             mount:
                     path: /samba_mount

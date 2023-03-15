@@ -1,0 +1,56 @@
+---
+- name: configuring iscsi_client
+  hosts: client
+  become: true
+  tasks:
+          - name: ensure iscsi-initiator-tuils packages is installed 
+            yum:
+                    name: iscsi-initiator-utils
+                    state: present
+
+          - name: copyint IQN to set initiator
+            copy:
+                    src: templates/initiator.iscsi.j2
+                    dest: /etc/iscsi/initiatorname.iscsi
+                    mode: '644'
+                    owner: root
+                    group: root
+
+          - name: restarting iscsi service
+            service:
+                    name: iscsid
+                    state: restarted
+
+          - name: iscsi discovering and login
+            open_iscsi:
+                    portal: 192.168.72.177
+                    port: '3260'
+                    discover: yes
+                    login: yes
+                    target: iqn.2023-03.com.example:server15
+            register: target 
+
+          - name: display new devices
+            debug:
+                    msg: the new device is {{ target['devicenodes'][0] }} 
+
+          - name: creating mountpoint directory /data
+            file:
+                    path: /data
+                    state: directory
+
+          - name: new device format using roles
+            include_role:
+                    name: /home/pemba/.ansible/roles/linux-system-roles.storage
+
+            vars:
+                     storage_volumes:
+                             - name: test1
+                               state: present
+                               type: disk
+                               disks:
+                                      - "{{ target['devicenodes'][0] }}" 
+                               mount_point: /data
+                               fs_type: xfs
+                               mount_options: '_netdev'
+
