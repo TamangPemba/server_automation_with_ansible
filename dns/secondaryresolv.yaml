@@ -1,0 +1,12 @@
+---
+- name: ensure client machine has dns as secondary dns server
+  hosts: client
+  become: true
+  tasks:
+           - name: ensure resolv file on client machine is updated
+	     copy:
+	             src: files/secondaryresolv.conf
+		     dest: /etc/resolv.conf
+		     owner: root
+		     group: root
+		     mode: '0640'
