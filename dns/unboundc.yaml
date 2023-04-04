@@ -1,0 +1,31 @@
+---
+- name: deploying ubound as a caching server
+  hosts: centos
+  become: true
+  tasks:
+    - name: ensure unbound packates is present
+      yum:
+        name: unbound
+        state: present
+
+    - name: unbound configuration is correct
+      template:
+        src: unbound.conf.j2
+        dest: /etc/unbound/conf.d/server.conf
+        owner: root
+        group: unbound
+        mode: '0640'
+        setype: named_conf_t
+
+    - name: unbound is started and enabled
+      service:
+        name: unbound
+        state: started
+        enabled: true
+
+    - name: dns is enabled on firewall
+      firewalld:
+        service: dns
+        state: enabled
+        immediate: true
+        permanent: true

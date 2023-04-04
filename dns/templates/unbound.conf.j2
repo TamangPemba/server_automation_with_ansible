@@ -1,0 +1,13 @@
+
+
+server:
+   interface: 192.168.1.200
+
+   access-control: 192.168.1.0/24 allow
+   access-control: 192.168.2.0/24 allow
+   domain-insecure: itnepal.com 
+
+
+   forward-zone:
+        name: "itnepal.com"
+	forward-addr: 192.168.1.100
