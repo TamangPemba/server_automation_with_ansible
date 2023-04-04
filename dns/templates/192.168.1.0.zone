@@ -1,0 +1,14 @@
+$TTL 1D
+@	IN SOA	 server.itnepal.com. root.itnepal.com.  (
+					20230402	; serial
+					1M	; refresh
+					1M	; retry
+					1W	; expire
+					3M  )	; minimum
+
+; owner      TTL    CLASS   TYPE    DATA
+
+	     600     IN      NS     server.itnepal.com. 
+100          600     IN      PTR    server.itnepal.com
+50           600     IN      PTR    client.itnepal.com.
+200          600     IN      PTR    centos.itnepal.com. 

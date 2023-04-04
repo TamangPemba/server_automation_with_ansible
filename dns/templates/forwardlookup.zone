@@ -1,0 +1,18 @@
+$TTL 1D
+@	IN SOA	 server.itnepal.com. root.itnepal.com. (
+					20230402	; serial
+					1M	; refresh
+					1M	; retry
+					1W	; expire
+					3M )	; minimum
+
+;owner-name   TTL  CLASS   TYPE   DATA
+
+	     600   IN       NS	    server 
+server       600   IN       A      192.168.1.100
+client       600   IN  	    A	   192.168.1.50
+centos       600   IN       A      192.168.1.200
+www                IN       A      192.168.1.200
+pemba              IN       A      192.168.1.200
+nepal.pembattamang.com IN   CNAME  centos.itnepal.com.
+dns.learnlinux.com     IN   CNAME  centos.itnepal.com. 

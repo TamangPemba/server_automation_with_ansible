@@ -1,0 +1,11 @@
+[centos]
+192.168.72.163
+[server]
+192.168.72.177
+
+[client]
+192.168.72.189
+
+[allservers:children]
+centos
+client

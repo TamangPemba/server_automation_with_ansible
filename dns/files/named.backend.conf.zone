@@ -1,0 +1,12 @@
+zone "itnepal.com" IN {
+   type master;
+   file "forwardlookup.zone";
+   forwarders {};
+};
+
+zone "1.168.192.in-addr.arpa" IN {
+    type master;
+    file "192.168.1.0.zone";
+    forwarders{};
+};
+

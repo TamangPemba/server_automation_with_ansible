@@ -1,0 +1,59 @@
+---
+- name: ensure authorative dns server is configured
+  hosts: server
+  become: true
+  tasks:
+          - name: ensure bind packages is present
+            yum:
+                    name: bind
+                    state: present
+
+          - name: ensure named.conf file is correct
+            copy:
+                    src: files/named.conf
+                    dest: /etc/named.conf
+                    owner: root
+                    group: named
+                    mode: '0640'
+                    setype: named_conf_t
+
+          - name: ensure zone configuration file are present 
+            copy:
+                    src: files/named.backend.conf.zone
+                    dest: /etc/named.backend.conf
+                    owner: root
+                    group: named
+                    mode: '0640'
+                    setype: named_conf_t
+
+          - name: ensure forward zone file are present
+            copy:
+                    src: templates/forwardlookup.zone
+                    dest: /var/named/forwardlookup.zone
+                    owner: root
+                    group: named
+                    mode: '0640'
+                    setype: named_zone_t
+          
+          - name: ensure reverse zone file are present
+            copy:
+                    src: templates/192.168.1.0.zone
+                    dest: /var/named/192.168.1.0.zone
+                    owner: root
+                    group: named
+                    mode: '0640'
+                    setype: named_zone_t
+
+          - name: ensure named service is restarted 
+            service:
+                    name: named
+                    state: restarted
+                    enabled: yes
+
+          - name: ensure firewall allow the dns service
+            firewalld:
+                    service: dns
+                    immediate: yes
+                    state: enabled
+                    permanent: yes
+

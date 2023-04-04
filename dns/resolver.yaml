@@ -1,0 +1,13 @@
+---
+- name: configuring resolver file on client machine
+  hosts: client
+  become: true
+  tasks:
+          - name: ensure resolver file are updated on client machine
+            copy:
+                    src: files/resolver.conf
+                    dest: /etc/resolv.conf
+                    owner: root
+                    group: root
+                    mode: 0640
+
